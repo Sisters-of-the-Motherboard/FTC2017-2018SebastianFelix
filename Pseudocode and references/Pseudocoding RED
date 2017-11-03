@@ -2,7 +2,6 @@ Pseudocoding For RED SIDE:
 
 Starting on Stone #3 facing center of field:
 
-Go backward small amount;
 
 if(ball is red){
 knock it off;
@@ -18,13 +17,11 @@ Park and end;
 
 Starting on Stone #4 facing center of field:
 
-Go backward small amount;
 
 if(ball is red){
 knock it off;
 }
 
-Go foreward slightly;
 Read coded image, store result;
 Display result in telemetry;
 Go forewards and turn towards glyph holders;
