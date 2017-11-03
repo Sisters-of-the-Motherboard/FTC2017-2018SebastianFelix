@@ -8,7 +8,6 @@ if(ball is red){
 knock it off;
 }
 
-Go foreward slightly;
 Read coded image, store result;
 Display result in telemetry;
 Go forewards and turn towards glyph holders;
