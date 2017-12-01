@@ -1,0 +1,105 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+/*
+   1 DECEMBER 2017
+ */
+
+
+
+@Autonomous(name="AutoRed3rd, 1 December", group="Linear Opmode")
+public class AutoRed3rdPlate extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+
+    @Override
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        waitForStart();
+        runtime.reset();
+
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.update();
+        
+        /* THIS IS WHERE THE DOING STARTS
+            BE PREPARED
+         */
+        
+       driveForeward(200, 0.1);
+        
+        
+    }
+
+
+
+
+
+
+    public void driveForeward(int targetPosFor, double drivePower){    //Allows Robot to move foreward
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        leftDrive.setTargetPosition(targetPosFor);
+        rightDrive.setTargetPosition(targetPosFor);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftDrive.setPower(drivePower);
+        rightDrive.setPower(drivePower);
+
+        while (leftDrive.isBusy() && rightDrive.isBusy()){
+
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+    }
+    
+    
+    
+    
+    public void driveTurning(int targetPosTurn, double powerL, double powerR) {    //Turns the Robot
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        leftDrive.setTargetPosition(targetPosTurn);
+        rightDrive.setTargetPosition(targetPosTurn);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftDrive.setPower(powerL);
+        rightDrive.setPower(powerR);
+
+        while (leftDrive.isBusy() && rightDrive.isBusy()){
+
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+
+
+
+}
