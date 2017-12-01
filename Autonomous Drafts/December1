@@ -1,0 +1,69 @@
+package org.firstinspires.ftc.teamcode;
+
+/**
+ * Created by ashley.peake on 12/1/2017.
+ */
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+@Autonomous(name="Autonomous1December", group="Linear Opmode")
+public class Autonomous1December extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+
+    @Override
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+
+        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        waitForStart();
+        runtime.reset();
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
+
+            leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+            leftDrive.setTargetPosition(200);
+            rightDrive.setTargetPosition(200);
+
+            leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            leftDrive.setPower(.1);
+            rightDrive.setPower(.1);
+
+            while (leftDrive.isBusy() && rightDrive.isBusy()){
+
+            }
+
+            leftDrive.setPower(0);
+            rightDrive.setPower(0);
+
+            leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            leftDrive.setPower(0);
+            rightDrive.setPower(0);
+
+
+        }
+
+
+
+}
