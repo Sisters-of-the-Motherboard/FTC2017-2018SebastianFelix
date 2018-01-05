@@ -1,0 +1,43 @@
+/*
+   * This method will be called repeatedly in a loop
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+   */
+  public int highestColor(int red, int blue) {
+    int[] color = {red,blue};
+    int value = 0;
+    for (int i = 1; i < 3; i++) {
+      if (color[value] < color[i]) {
+        value = i;
+      }
+    }
+    return value;
+  }
+
+  @Override
+  public void loop() {
+    if (yuvImage != null) {
+      int redValue = 0;
+      int blueValue = 0;
+      convertImage();
+      for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+          int pixel = image.getPixel(x, y);
+          redValue += red(pixel);
+          blueValue += blue(pixel)；
+        }
+      }
+      int color = highestColor(redValue, blueValue);
+      String colorString = "";
+      switch (color) {
+        case 0:
+          colorString = "RED";
+          break;
+        case 1:
+          colorString = "BLUE";
+      }
+      telemetry.addData("Color:", "Color detected is: " + colorString);
+    }
+    telemetry.addData("Looped","Looped " + Integer.toString(looped) + " times");
+    Log.d("DEBUG:",data);
+  }
+}
