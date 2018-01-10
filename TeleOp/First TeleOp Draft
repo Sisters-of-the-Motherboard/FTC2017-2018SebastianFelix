@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -18,6 +19,12 @@ public class TeleOpDraft extends LinearOpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
+    private DcMotor clawMotor = null;
+
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -27,6 +34,10 @@ public class TeleOpDraft extends LinearOpMode {
         leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
         rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
 
+        clawMotor = hardwareMap.get(DcMotor.class, "clawMotor");
+
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
 
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -51,6 +62,27 @@ public class TeleOpDraft extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
+
+            if(gamepad2.y){
+                clawOfDoomLeft.setPosition(1.0);
+                clawOfDoomRight.setPosition(0.0);
+            }
+            else {
+                clawOfDoomLeft.setPosition(0.7);
+                clawOfDoomRight.setPosition(0.3);
+            }
+
+            if(gamepad2.dpad_up){
+                clawMotor.setPower(0.3);
+
+            }
+            else {
+                clawMotor.setPower(0);
+            }
+            if(gamepad2.dpad_down){
+                clawMotor.setPower(-0.3);
+            }
+
         }
     }
 }
