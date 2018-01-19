@@ -1,0 +1,76 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+
+@TeleOp(name = "Sensor: MR Color", group = "Sensor")
+
+public class SensorColorModernRobotics extends LinearOpMode {
+
+  ColorSensor colorSensor;    // Hardware Device Object
+
+
+  @Override
+  public void runOpMode() {
+
+    // hsvValues is an array that will hold the hue, saturation, and value information.
+    float hsvValues[] = {0F,0F,0F};
+
+    // values is a reference to the hsvValues array.
+    final float values[] = hsvValues;
+
+    int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+    final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+
+
+    boolean bPrevState = false;
+    boolean bCurrState = false;
+
+    boolean bLedOn = true;
+
+    // get a reference to our ColorSensor object.
+    colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
+
+    // Set the LED in the beginning
+    colorSensor.enableLed(bLedOn);
+
+
+    waitForStart();
+    while (opModeIsActive()) {
+
+      bCurrState = gamepad1.x;
+
+      if (bCurrState && (bCurrState != bPrevState)) {
+
+        bLedOn = !bLedOn;
+        colorSensor.enableLed(bLedOn);
+      }
+
+      Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+      telemetry.addData("LED", bLedOn ? "On" : "Off");
+      telemetry.addData("Clear", colorSensor.alpha());
+      telemetry.addData("Red  ", colorSensor.red());
+      telemetry.addData("Green", colorSensor.green());
+      telemetry.addData("Blue ", colorSensor.blue());
+      telemetry.addData("Hue", hsvValues[0]);
+
+      telemetry.update();
+
+
+      if (colorSensor.blue() > colorSensor.red() || colorSensor.blue() > colorSensor.green()) {
+
+        // needs the code to let the robot move toward the ball and knock off another
+
+
+
+      } else if (colorSensor.red() > colorSensor.blue() || colorSensor.red() > colorSensor.green()) {
+
+}
+ 
