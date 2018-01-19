@@ -64,7 +64,7 @@ public class MRI_ColorSensor extends LinearOpMode {
                 CDI.setLED(1, false);
                 CDI.setLED(0, false);
             }
-
+／／waitOneFullHardwareCycle is useful hwen a command is sented and wait for it to effect.
             waitOneFullHardwareCycle(); //deprecated, not sure what is wrong
 
         }
