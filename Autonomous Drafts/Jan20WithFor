@@ -214,24 +214,6 @@ public class Jan11 extends LinearOpMode {
 // EVERYTHING BELOW THIS POINT IS METHODS --------------------------------------------------------------------------------
 
 
-
-
-//Set encoder distances (EXCEPT THIS)
-
-      /* int initLeftCount = leftDrive.getCurrentPosition();
-
-       *int tgLeftCount = initLeftCount + 89;
-
-       *int initRightCount = rightDrive.getCurrentPosition();
-
-       *int tgRightCount = initRightCount + 89;
-	*/
-
-
-
-
-
-
     public String findVuMarkOrientation(RelicRecoveryVuMark vuMark) {
 
             String picOrientation = "";
