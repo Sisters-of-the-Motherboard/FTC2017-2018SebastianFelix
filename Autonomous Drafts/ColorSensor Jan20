@@ -1,0 +1,44 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.graphics.Color;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+public class MRI_ColorSensor extends LinearOpMode {
+    ColorSensor colorSensor;
+    DeviceInterfaceModule CDI;
+
+    @Override
+    public void runOpMode () throws InterruptedException {
+        colorSensor = hardwareMap.colorSensor.get("color");
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
+        boolean LEDState = true;
+
+        waitForStart();
+
+        colorSensor.enableLed(LEDState);
+
+        float hsvValues[] = {0, 0, 0};
+
+        while (opModeIsActive()) {
+
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+            telemetry.addData("3 Red", colorSensor.red());
+            telemetry.addData("5 Blue", colorSensor.blue());
+
+            if (colorSensor.red() > colorSensor.blue()) {
+                CDI.setLED(1, true); //red is on
+                CDI.setLED(0, false); //blue is off
+            }
+
+            //if it is not either blue or red, both blue and red are off
+            else {
+                CDI.setLED(1, false);
+                CDI.setLED(0, false);
+            }
+        }
+    }
+}
