@@ -1,3 +1,33 @@
+
+/** ********PLEASE READ THIS IF YOU ARE TESTING THIS******************
+
+Things I changed: 
+I took out all of the COLOR SENSOR things we are currently not using (can be added back in)
+Took out (most) things related to POSE (based on pg. 9 of https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/using-vumarks.pdf)
+
+ADDED methods for:
+Open claws
+Close claws
+Detect VuMark Orientatio (returns a string)
+A TIMER that acts as a wait command --- sleep() turns off sensors and may be a cause of your recent errors, Ashley. I hope.
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package org.firstinspires.ftc.teamcode;
 
 import android.view.View;
@@ -26,10 +56,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
-@Autonomous(name="January 20 With For", group ="Autonomous")
+@Autonomous(name="January 11", group ="Autonomous")
 
 
-public class Jan20For extends LinearOpMode {
+public class Jan11 extends LinearOpMode {
 
     View relativeLayout;
 
@@ -161,23 +191,20 @@ public class Jan20For extends LinearOpMode {
 
 
 
+//THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
+
         waitForStart();
 
 
 
         relicTrackables.activate();
-
-
-
-
-
-//THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
-
+           
+            String picOrientation = "";
 
             for(i= 0; i < 5; i++){
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
-            String picOrientation = findVuMarkOrientation(vuMark);
+            picOrientation = findVuMarkOrientation(vuMark);
 
             telemetry.addData("position", picOrientation);
 
@@ -193,20 +220,12 @@ public class Jan20For extends LinearOpMode {
                 openTheCLAWS();
 
                 waitForATime(timerOne, 3.0);
-                
-                break;
 
             }
             else if(picOrientation.equals("RIGHT")){
 
-
-                break;
-
             }
             else if(picOrientation.equals("CENTER")){
-
-
-                break;
 
 
             }
