@@ -189,20 +189,13 @@ public class Jan11 extends LinearOpMode {
 
         clawOfDoomRight.setPosition(0);
 
-
+//THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
 
         waitForStart();
 
 
 
         relicTrackables.activate();
-
-
-
-
-
-//THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
-
 
 
         while (opModeIsActive()) {
@@ -213,7 +206,7 @@ public class Jan11 extends LinearOpMode {
             String picOrientation = findVuMarkOrientation(vuMark);
 
             telemetry.addData("position", picOrientation);
-
+	   
 
             if(picOrientation.equals("LEFT")){
 
@@ -222,18 +215,19 @@ public class Jan11 extends LinearOpMode {
                 openTheCLAWS();
 
                 waitForATime(timerOne, 3.0);
+		
+		break;
 
             }
             else if(picOrientation.equals("RIGHT")){
 
-
+		break;
 
             }
             else if(picOrientation.equals("CENTER")){
 
 
-
-
+		break;
 
             }
 
@@ -250,24 +244,6 @@ public class Jan11 extends LinearOpMode {
 
 
 // EVERYTHING BELOW THIS POINT IS METHODS --------------------------------------------------------------------------------
-
-
-
-
-//Set encoder distances (EXCEPT THIS)
-
-      /* int initLeftCount = leftDrive.getCurrentPosition();
-
-       *int tgLeftCount = initLeftCount + 89;
-
-       *int initRightCount = rightDrive.getCurrentPosition();
-
-       *int tgRightCount = initRightCount + 89;
-	*/
-
-
-
-
 
 
     public String findVuMarkOrientation(RelicRecoveryVuMark vuMark) {
