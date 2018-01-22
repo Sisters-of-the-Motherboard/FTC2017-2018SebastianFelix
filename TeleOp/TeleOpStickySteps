@@ -1,0 +1,277 @@
+
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+
+
+@TeleOp(name="TeleOpStickySteps", group="Linear Opmode")
+//@Disabled
+public class TeleOpStickySteps extends LinearOpMode {
+
+    // Declare OpMode members.
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
+    private DcMotor liftMotor;
+
+
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+
+    private static final int driveUp = 35; //to drive position
+    private static final int secUp = 25; //place above 1st block
+    private static final int thrdUp = 30;//place above 2nd block
+    private static final int frthUp = 30;//place above 3rd block
+    private int downAll;
+    private int pressCount;
+
+
+    @Override
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+
+        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
+
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
+        waitForStart();
+        runtime.reset();
+
+
+        while (opModeIsActive()) {
+            double leftPower;
+            double rightPower;
+
+            leftPower  = gamepad1.left_stick_y * 0.75;
+            rightPower = gamepad1.right_stick_y * 0.75 ;
+
+
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.update();
+
+            if(gamepad2.y){   //open claws
+                clawOfDoomLeft.setPosition(0.9);
+                clawOfDoomRight.setPosition(0.1);
+            }
+            else { //keep closed
+                clawOfDoomLeft.setPosition(0.3);
+                clawOfDoomRight.setPosition(0.7);
+            }
+
+
+            if(gamepad2.left_bumper){  //Move up
+
+                pressCount ++;
+
+                if(pressCount == 1){
+
+                    liftMotor.setTargetPosition(driveUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll += driveUp;
+
+                }
+                else if(pressCount == 2){
+
+                    liftMotor.setTargetPosition(secUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll += secUp;
+
+                }
+                else if(pressCount == 3){
+
+                    liftMotor.setTargetPosition(thrdUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll += thrdUp;
+
+                }
+                else if(pressCount == 4){
+
+                    liftMotor.setTargetPosition(frthUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll += frthUp;
+
+                }
+                else if(pressCount > 4){
+
+                    pressCount = 4;
+
+                }
+
+
+
+            }
+            else if(gamepad2.x){  //Move down
+
+                liftMotor.setTargetPosition(-downAll);
+
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                liftMotor.setPower(-0.3);
+
+                while (liftMotor.isBusy()) {
+
+
+                }
+
+                liftMotor.setPower(0);
+
+                pressCount = 0;
+
+            }
+
+            else if(gamepad2.right_bumper){
+
+                 if(pressCount == 1){
+
+                    liftMotor.setTargetPosition(-driveUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(-0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll -= driveUp;
+
+
+                }
+                else if(pressCount == 2){
+
+                    liftMotor.setTargetPosition(-secUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(-0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll -= secUp;
+
+                }
+                else if(pressCount == 3){
+
+                    liftMotor.setTargetPosition(-thrdUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(-0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll -= thrdUp;
+
+                }
+                else if(pressCount == 4){
+
+                    liftMotor.setTargetPosition(-frthUp);
+
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    liftMotor.setPower(-0.3);
+
+                    while (liftMotor.isBusy()) {
+
+
+                    }
+
+                    liftMotor.setPower(0);
+
+                    downAll -= frthUp;
+
+                }
+                else if(pressCount <= 0) {
+
+                    pressCount = 0;
+                }
+
+
+
+            }
+            else {
+
+            }
+
+        }
+    }
+}
