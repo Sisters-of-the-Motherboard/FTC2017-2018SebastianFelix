@@ -158,7 +158,7 @@ public class TeleOpWithEncoders extends LinearOpMode {
 
                 }
                 else if(pressCount > 4){
-
+                    pressCount = 4;
 
                 }
 
