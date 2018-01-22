@@ -17,10 +17,10 @@ public class TeleOpDraft extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
+    private DcMotor liftMotor;
 
-    private DcMotor clawMotor = null;
 
     Servo clawOfDoomLeft;
     Servo clawOfDoomRight;
@@ -35,7 +35,7 @@ public class TeleOpDraft extends LinearOpMode {
         leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
         rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
 
-        clawMotor = hardwareMap.get(DcMotor.class, "clawMotor");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
         clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
         clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
@@ -64,24 +64,24 @@ public class TeleOpDraft extends LinearOpMode {
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
 
-            if(gamepad2.y){
-                clawOfDoomLeft.setPosition(1.0);
-                clawOfDoomRight.setPosition(0.0);
+            if(gamepad2.y){   //open claws
+                clawOfDoomLeft.setPosition(0.9);
+                clawOfDoomRight.setPosition(0.1);
             }
-            else {
-                clawOfDoomLeft.setPosition(0.7);
-                clawOfDoomRight.setPosition(0.3);
+            else { //keep closed
+                clawOfDoomLeft.setPosition(0.3);
+                clawOfDoomRight.setPosition(0.7);
             }
 
-            if(gamepad2.dpad_up){
-                clawMotor.setPower(0.3);
 
+            if(gamepad2.left_bumper){  //Move up
+                liftMotor.setPower(0.3);
+            }
+            else if(gamepad2.right_bumper){  //Move down
+                liftMotor.setPower(0.3);
             }
             else {
-                clawMotor.setPower(0);
-            }
-            if(gamepad2.dpad_down){
-                clawMotor.setPower(-0.3);
+
             }
 
         }
