@@ -82,6 +82,8 @@ public class TeleOpDraft extends LinearOpMode {
             }
             else {
 
+                liftMotor.setPower(0);
+
             }
 
         }
