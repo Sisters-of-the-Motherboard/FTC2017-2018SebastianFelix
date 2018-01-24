@@ -29,8 +29,8 @@ public class TeleOpWithEncoders extends LinearOpMode {
     private static final int secUp = 25; //place above 1st block
     private static final int thrdUp = 30;//place above 2nd block
     private static final int frthUp = 30;//place above 3rd block
-    private int downAll;
-    private int pressCount;
+    private int downAll = 0;
+    private int pressCount = 0;
 
 
     @Override
