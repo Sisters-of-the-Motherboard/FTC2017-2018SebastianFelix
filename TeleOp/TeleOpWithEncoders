@@ -87,11 +87,11 @@ public class TeleOpWithEncoders extends LinearOpMode {
 
                 if(pressCount == 1){
 
-                    liftMotor.setTargetPosition(driveUp);
+                    liftMotor.setTargetPosition(-driveUp);
 
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    liftMotor.setPower(0.3);
+                    liftMotor.setPower(-0.3);
 
                     while (liftMotor.isBusy()) {
 
@@ -105,11 +105,11 @@ public class TeleOpWithEncoders extends LinearOpMode {
                 }
                 else if(pressCount == 2){
 
-                    liftMotor.setTargetPosition(secUp);
+                    liftMotor.setTargetPosition(-secUp);
 
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    liftMotor.setPower(0.3);
+                    liftMotor.setPower(-0.3);
 
                     while (liftMotor.isBusy()) {
 
@@ -123,11 +123,11 @@ public class TeleOpWithEncoders extends LinearOpMode {
                 }
                 else if(pressCount == 3){
 
-                    liftMotor.setTargetPosition(thrdUp);
+                    liftMotor.setTargetPosition(-thrdUp);
 
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    liftMotor.setPower(0.3);
+                    liftMotor.setPower(-0.3);
 
                     while (liftMotor.isBusy()) {
 
@@ -141,11 +141,11 @@ public class TeleOpWithEncoders extends LinearOpMode {
                 }
                 else if(pressCount == 4){
 
-                    liftMotor.setTargetPosition(frthUp);
+                    liftMotor.setTargetPosition(-frthUp);
 
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    liftMotor.setPower(0.3);
+                    liftMotor.setPower(-0.3);
 
                     while (liftMotor.isBusy()) {
 
@@ -167,11 +167,11 @@ public class TeleOpWithEncoders extends LinearOpMode {
             }
             else if(gamepad2.right_bumper){  //Move down
 
-                    liftMotor.setTargetPosition(-downAll);
+                    liftMotor.setTargetPosition(downAll);
 
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    liftMotor.setPower(-0.3);
+                    liftMotor.setPower(0.3);
 
                     while (liftMotor.isBusy()) {
 
