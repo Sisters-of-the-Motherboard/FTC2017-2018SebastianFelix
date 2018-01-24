@@ -75,7 +75,7 @@ public class TeleOpDraft extends LinearOpMode {
 
 
             if(gamepad2.left_bumper){  //Move up
-                liftMotor.setPower(0.3);
+                liftMotor.setPower(-0.3);
             }
             else if(gamepad2.right_bumper){  //Move down
                 liftMotor.setPower(0.3);
