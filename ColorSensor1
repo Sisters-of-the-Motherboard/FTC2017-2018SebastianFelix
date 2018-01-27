@@ -24,7 +24,7 @@ public class ColorSensor1 extends LinearOpMode {
 
 
     ColorSensor Rainbow;
-    Servo ColorServo;
+    // ColorServo;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,7 +32,7 @@ public class ColorSensor1 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        ColorServo = hardwareMap.servo.get("ColorServo");
+       // ColorServo = hardwareMap.servo.get("ColorServo");
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
@@ -78,15 +78,26 @@ public class ColorSensor1 extends LinearOpMode {
             if (Rainbow.red() >= 40) {
                 ForwardTimer.reset();
                 while (ForwardTimer.milliseconds() < 300) {
-                    ColorServo.setPosition(01);
+                 //   ColorServo.setPosition(01);
 
+                    telemetry.addData("LED", bLedOn ? "On" : "Off");
+                    telemetry.addData("Clear", Rainbow.alpha());
+                    telemetry.addData("Red  ", Rainbow.red());
+                    telemetry.addData("Green", Rainbow.green());
+                    telemetry.addData("Blue ", Rainbow.blue());
+                    telemetry.addData("Hue", hsvValues[0]);
                 }
                 {
 
                     if (Rainbow.red() >= 0) {
 
-                        ColorServo.setPosition(00);
-
+                        //ColorServo.setPosition(00);
+                        telemetry.addData("LED", bLedOn ? "On" : "Off");
+                        telemetry.addData("Clear", Rainbow.alpha());
+                        telemetry.addData("Red  ", Rainbow.red());
+                        telemetry.addData("Green", Rainbow.green());
+                        telemetry.addData("Blue ", Rainbow.blue());
+                        telemetry.addData("Hue", hsvValues[0]);
 
                     }
 
