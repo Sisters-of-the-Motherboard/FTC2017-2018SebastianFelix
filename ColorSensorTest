@@ -1,0 +1,91 @@
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+import android.graphics.Color;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+public class ColorSensorTestJan26 extends LinearOpMode {
+    ColorSensor Rainbow;
+    DeviceInterfaceModule CDI;
+
+    @Override
+    public void runOpMode () throws InterruptedException {
+        Rainbow = hardwareMap.colorSensor.get("Rainbow");
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
+        boolean LEDState = true;
+
+        waitForStart();
+
+        Rainbow.enableLed(LEDState);
+
+        float hsvValues[] = {0, 0, 0};
+
+        while (opModeIsActive()) {
+
+            Color.RGBToHSV(Rainbow.red() * 8, Rainbow.green() * 8, Rainbow.blue() * 8, hsvValues);
+
+            telemetry.addData("3 Red", Rainbow.red());
+            telemetry.addData("5 Blue", Rainbow.blue());
+
+            if (Rainbow.red() > Rainbow.blue()) {
+                CDI.setLED(1, true); //red is on
+                CDI.setLED(0, false); //blue is off
+            }
+
+            //if it is not either blue or red, both blue and red are off
+            else {
+                CDI.setLED(1, false);
+                CDI.setLED(0, false);
+            }
+        }
+    }
+package org.firstinspires.ftc.teamcode;
+
+import android.graphics.Color;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+@Autonomous(name="ColorSensorTest", group ="Autonomous")
+
+public class ColorSensorTest extends LinearOpMode {
+    ColorSensor Rainbow;
+    DeviceInterfaceModule CDI;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        Rainbow = hardwareMap.colorSensor.get("Rainbow");
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
+        boolean LEDState = true;
+
+        waitForStart();
+
+        Rainbow.enableLed(LEDState);
+
+        float hsvValues[] = {0, 0, 0};
+
+        while (opModeIsActive()) {
+
+            Color.RGBToHSV(Rainbow.red() * 8, Rainbow.green() * 8, Rainbow.blue() * 8, hsvValues);
+
+            telemetry.addData("3 Red", Rainbow.red());
+            telemetry.addData("5 Blue", Rainbow.blue());
+
+            if (Rainbow.red() > Rainbow.blue()) {
+                CDI.setLED(1, true); //red is on
+                CDI.setLED(0, false); //blue is off
+            }
+
+            //if it is not either blue or red, both blue and red are off
+            else {
+                CDI.setLED(1, false);
+                CDI.setLED(0, false);
+            }
+        }
+    }
+}
