@@ -1,0 +1,98 @@
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.media.AudioTrack;
+import android.view.View;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+/**
+ * Created by ashley.peake on 1/21/2017.
+ */
+
+@Autonomous(name = "ColorSensor1", group = "LinearOpMode")
+
+public class ColorSensor1 extends LinearOpMode {
+
+    private ElapsedTime ForwardTimer = new ElapsedTime();
+    private ElapsedTime BackwardTimer = new ElapsedTime();
+
+
+    ColorSensor Rainbow;
+    Servo ColorServo;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        ColorServo = hardwareMap.servo.get("ColorServo");
+
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F, 0F, 0F};
+
+        // values is a reference to the hsvValues array.
+        final float values[] = hsvValues;
+
+        // get a reference to the RelativeLayout so we can change the background
+        // color of the Robot Controller app to match the hue detected by the RGB sensor.
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
+
+        // bPrevState and bCurrState represent the previous and current state of the button.
+        boolean bPrevState = false;
+        boolean bCurrState = false;
+
+
+        // bLedOn represents the state of the LED.
+        boolean bLedOn = true;
+
+        // get a reference to our ColorSensor object.
+        Rainbow = hardwareMap.colorSensor.get("Rainbow");
+
+        // Set the LED in the beginning
+        Rainbow.enableLed(bLedOn);
+
+        // wait for the start button to be pressed.
+        waitForStart();
+
+        // while the op mode is active, loop and read the RGB data.
+        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
+        while (opModeIsActive()) {
+            Color.RGBToHSV(Rainbow.red() * 8, Rainbow.green() * 8, Rainbow.blue() * 8, hsvValues);
+
+            telemetry.addData("LED", bLedOn ? "On" : "Off");
+            telemetry.addData("Clear", Rainbow.alpha());
+            telemetry.addData("Red  ", Rainbow.red());
+            telemetry.addData("Green", Rainbow.green());
+            telemetry.addData("Blue ", Rainbow.blue());
+            telemetry.addData("Hue", hsvValues[0]);
+
+            telemetry.update();
+
+            if (Rainbow.red() >= 40) {
+                ForwardTimer.reset();
+                while (ForwardTimer.milliseconds() < 300) {
+                    ColorServo.setPosition(01);
+
+                }
+                {
+
+                    if (Rainbow.red() >= 0) {
+
+                        ColorServo.setPosition(00);
+
+
+                    }
+
+                }
+            }
+
+        }
+    }
+}
