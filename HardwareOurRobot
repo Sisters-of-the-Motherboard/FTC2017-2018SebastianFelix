@@ -1,0 +1,96 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+/**
+ * Created by breanna.sorrells on 1/29/2018.
+ *
+ * To add -  wiring data (where the stuff is)
+ * Actual servo initialization positions
+ * Change for new stuff!!
+ */
+
+public class HardwareOurRobot {
+
+    //Wheels
+    public DcMotor leftDrive;
+    public DcMotor rightDrive;
+
+    //Glyph operators
+    public DcMotor liftMotor;
+    public Servo clawOfDoomLeft;
+    public Servo clawOfDoomRight;
+
+    //Relic operators
+    public DcMotor slideMotor;
+    public Servo grabberFront;
+    public Servo grabberBack;
+    public Servo rotator;
+
+    //Color Sensor stuff
+    public Servo colorServo;
+    public ColorSensor Rainbow;
+
+    public HardwareOurRobot(){
+
+    }
+
+
+    public void initializeRobot(HardwareMap HWMap) {
+
+        leftDrive  = HWMap.dcMotor.get("leftDrive");
+        rightDrive = HWMap.dcMotor.get("rightDrive");
+
+        liftMotor = HWMap.dcMotor.get("liftMotor");
+        clawOfDoomLeft = HWMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = HWMap.servo.get("clawOfDoomRight");
+
+        slideMotor = HWMap.dcMotor.get("slideMotor");
+        grabberFront = HWMap.servo.get("grabberFront");
+        grabberBack = HWMap.servo.get("grabberBack");
+        rotator = HWMap.servo.get("rotator");
+
+        colorServo = HWMap.servo.get("colorServo");
+        Rainbow = HWMap.colorSensor.get("Rainbow");
+
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        /*
+                SET SERVO INIT VALUES
+         */
+
+    }
+
+    public void openTheCLAWS(){
+        clawOfDoomLeft.setPosition(0.0);
+
+        clawOfDoomRight.setPosition(1.0);
+    }
+
+    public void  closeTheCLAWS(){
+        clawOfDoomLeft.setPosition(1.0);
+
+        clawOfDoomRight.setPosition(0.0);
+    }
+
+    public void driveByTime(double powerL, double powerR, double mSec){ //For driving
+
+        ElapsedTime driveTime = new ElapsedTime();
+
+        driveTime.reset();
+
+        while (driveTime.milliseconds() < mSec ) {
+            leftDrive.setPower(powerL);
+            rightDrive.setPower(powerR);
+        }
+
+        leftDrive.setPower(0.0);
+        rightDrive.setPower(0.0);
+
+    }
+}
