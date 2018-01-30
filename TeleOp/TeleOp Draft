@@ -20,10 +20,16 @@ public class TeleOpDraft extends LinearOpMode {
     private DcMotor leftDrive;
     private DcMotor rightDrive;
     private DcMotor liftMotor;
+    private DcMotor slideMotor;
+
 
 
     Servo clawOfDoomLeft;
     Servo clawOfDoomRight;
+    Servo grabberFront;
+    Servo grabberBack;
+    Servo rotator;
+    Servo ColorServo;
 
 
     @Override
@@ -32,28 +38,44 @@ public class TeleOpDraft extends LinearOpMode {
         telemetry.update();
 
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
         rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
 
         clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
         clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
 
+        grabberFront = hardwareMap.servo.get("grabberFront");
+        grabberBack = hardwareMap.servo.get("grabberBack");
+        rotator = hardwareMap.servo.get("rotator");
+
+        ColorServo = hardwareMap.servo.get("ColorServo");
+
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        //leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
+
+    ColorServo.setPosition(.5);
+    grabberBack.setPosition(0.1);
+    grabberFront.setPosition(0.1);
+    rotator.setPosition(0.8);
+
+
         runtime.reset();
 
 
-        while (opModeIsActive()) {
-            double leftPower;
-            double rightPower;
 
-            leftPower  = gamepad1.left_stick_y * 0.75;
-            rightPower = gamepad1.right_stick_y * 0.75 ;
+
+        while (opModeIsActive()) {
+
+            double leftPower = gamepad1.left_stick_y;
+            double rightPower = gamepad1.right_stick_y;
 
 
             leftDrive.setPower(leftPower);
@@ -62,30 +84,88 @@ public class TeleOpDraft extends LinearOpMode {
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+
             telemetry.update();
 
-            if(gamepad2.y){   //open claws
-                clawOfDoomLeft.setPosition(0.9);
-                clawOfDoomRight.setPosition(0.1);
+            if (gamepad2.x) {   //close claws
+
+                clawOfDoomLeft.setPosition(1.0);
+                clawOfDoomRight.setPosition(0.0);
             }
-            else { //keep closed
-                clawOfDoomLeft.setPosition(0.3);
-                clawOfDoomRight.setPosition(0.7);
+
+            else { //open claws
+
+                clawOfDoomLeft.setPosition(0.8);
+                clawOfDoomRight.setPosition(0.2);
+
             }
 
 
-            if(gamepad2.left_bumper){  //Move up
+
+            if (gamepad2.right_bumper) {  //Move up
                 liftMotor.setPower(-0.3);
+
+            } else if (gamepad2.left_bumper) {  //Move down
+                    liftMotor.setPower(0.3);
+
+            } else {
+                    liftMotor.setPower(0);
+
+                }
+
+            if(gamepad2.dpad_up){
+
+                slideMotor.setPower(-.3);
+
+            } else if (gamepad2.dpad_down){
+
+                slideMotor.setPower(.1);
+            } else {
+
+                slideMotor.setPower(0);
             }
-            else if(gamepad2.right_bumper){  //Move down
-                liftMotor.setPower(0.3);
-            }
+
+
+               if(gamepad2.y){
+
+
+                rotator.setPosition(0.0);
+
+                }
+
+                else {
+
+
+                   rotator.setPosition(1.0);
+               }
+
+
+
+            if (gamepad2.b){
+
+
+                    //grabberBack.setPosition(0.4);
+                    grabberFront.setPosition(0.5);
+
+                }
+
             else {
 
-                liftMotor.setPower(0);
+                grabberBack.setPosition(0.1);
+                grabberFront.setPosition(0.1);
+
 
             }
+            }
 
+
+
+
+
+
+
+
+            }
         }
-    }
-}
+
+
