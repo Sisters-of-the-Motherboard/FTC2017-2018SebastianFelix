@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -53,9 +54,13 @@ public class HardwareOurRobot {
     //Vuforia
     public static final String TAG = "Vuforia VuMark Sample";
     VuforiaLocalizer vuforia;
+    VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+    VuforiaTrackable relicTemplate = relicTrackables.get(0);
+
 
     //Timer
     ElapsedTime driveTime = new ElapsedTime();
+
 
 
 //---------------------METHODS------------------------------------------
@@ -105,7 +110,7 @@ public class HardwareOurRobot {
 
         clawOfDoomLeft.setPosition(0.5);
         clawOfDoomRight.setPosition(0.5);
-        colorServo.setPosition(0.5);
+        colorServo.setPosition(0.4);
         grabberBack.setPosition(0.1);
         grabberFront.setPosition(0.1);
         rotator.setPosition(0.8);
@@ -140,9 +145,6 @@ public class HardwareOurRobot {
 
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
 
         relicTemplate.setName("relicVuMarkTemplate");
 
@@ -191,7 +193,7 @@ public class HardwareOurRobot {
 
     public String senseColor(){
 
-        String returnColor = "NONE";
+        String returnColor = "";
 
         for(int i = 0; i <= 5; i++) {
             // Read the sensor
@@ -220,11 +222,51 @@ public class HardwareOurRobot {
                 returnColor = "BLUE";
 
             }
+            else {
+                returnColor = "NONE";
+            }
 
         }
 
 
         return returnColor;
+
+    }
+
+
+    public String readVuforia(){
+
+        relicTrackables.activate();
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+        String picOrientation = "NONE";
+
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            // Test to see if Image is the "LEFT" image and display value.
+
+            picOrientation = "LEFT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            // Test to see if Image is the "RIGHT" image and display values.
+
+
+            picOrientation = "RIGHT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.CENTER) {
+            // Test to see if Image is the "CENTER" image and display values.
+
+            picOrientation = "CENTER";
+
+
+        }
+
+
+
+        return picOrientation;
 
     }
 
