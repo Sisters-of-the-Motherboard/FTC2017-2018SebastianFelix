@@ -1,10 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.Vuforia;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by breanna.sorrells on 1/29/2018.
@@ -17,8 +30,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareOurRobot {
 
     //Wheels
-    public DcMotor leftDrive;
-    public DcMotor rightDrive;
+    public DcMotor leftFront;
+    public DcMotor leftBack;
+    public DcMotor rightFront;
+    public DcMotor rightBack;
 
     //Glyph operators
     public DcMotor liftMotor;
@@ -33,17 +48,32 @@ public class HardwareOurRobot {
 
     //Color Sensor stuff
     public Servo colorServo;
-    public ColorSensor Rainbow;
+    public NormalizedColorSensor Rainbow;
 
-    public HardwareOurRobot(){
+    //Vuforia
+    public static final String TAG = "Vuforia VuMark Sample";
+    VuforiaLocalizer vuforia;
+
+    //Timer
+    ElapsedTime driveTime = new ElapsedTime();
+
+
+//---------------------METHODS------------------------------------------
+
+
+    //Constructor
+    public HardwareOurRobot() {
 
     }
 
 
+    //Initializations
     public void initializeRobot(HardwareMap HWMap) {
 
-        leftDrive  = HWMap.dcMotor.get("leftDrive");
-        rightDrive = HWMap.dcMotor.get("rightDrive");
+        leftFront = HWMap.dcMotor.get("leftFront");
+        leftBack = HWMap.dcMotor.get("leftBack");
+        rightFront = HWMap.dcMotor.get("rightFront");
+        rightBack = HWMap.dcMotor.get("rightBack");
 
         liftMotor = HWMap.dcMotor.get("liftMotor");
         clawOfDoomLeft = HWMap.servo.get("clawOfDoomLeft");
@@ -55,22 +85,81 @@ public class HardwareOurRobot {
         rotator = HWMap.servo.get("rotator");
 
         colorServo = HWMap.servo.get("colorServo");
-        Rainbow = HWMap.colorSensor.get("Rainbow");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        Rainbow = HWMap.get(NormalizedColorSensor.class, "Rainbow");
+
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        //Will this regulate speed better? Can remove.
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         /*
-                SET SERVO INIT VALUES
+                SET SERVO INIT VALUES CORRECTLY
          */
 
+        clawOfDoomLeft.setPosition(0.5);
+        clawOfDoomRight.setPosition(0.5);
+        colorServo.setPosition(0.5);
+        grabberBack.setPosition(0.1);
+        grabberFront.setPosition(0.1);
+        rotator.setPosition(0.8);
+
+
     }
 
+
+    public void initializeColorSensor(HardwareMap HWMap) throws InterruptedException {
+
+        // turn the light on
+        if (Rainbow instanceof SwitchableLight) {
+            ((SwitchableLight) Rainbow).enableLight(true);
+        }
+
+
+    }
+
+
+    public void initializeVuforia(HardwareMap HWMap){
+
+        int cameraMonitorViewId = HWMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
+                "id", HWMap.appContext.getPackageName());
+
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        parameters.vuforiaLicenseKey =
+                "AddfCmL/////AAAAGfhZdqZawEPNnf6i6NP5bBJnbxm51Vv6Ic543cGLSFZRXzcCLKL8Dz/UCbHG7kVdxhx3dkMGRdopyfekAowHmlslyP5m3pZkhDaGrzdVyZZnVV7rho4mjaUSBQJhx6plhZyFPPK6q7+7xcdFXRhSpOXtRTU3tjVQOFbA2B9uuRGheb1HeidRDvhS/856blHK3Wv +PmeJBgZIrPkGOrLPDsyUqQtFZxKnn65Yce43u0wcs/dbn0ssr+bvvqp1Q4JKJrm2XnzwmtqNd0PZHO6hxHzyaxC5ge +aExWcSEM72yE8d1DznHQ/s5wYRJpVaAss7/F885CTL0zB+Pzcb3wfuG93rlIQE8coMcmqrk+tmuHH";
+
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+
+        relicTemplate.setName("relicVuMarkTemplate");
+
+
+
+    }
+
+
+
+
+        //Movement methods
     public void openTheCLAWS(){
-        clawOfDoomLeft.setPosition(0.0);
+        clawOfDoomLeft.setPosition(0.8);
 
-        clawOfDoomRight.setPosition(1.0);
+        clawOfDoomRight.setPosition(0.2);
     }
+
 
     public void  closeTheCLAWS(){
         clawOfDoomLeft.setPosition(1.0);
@@ -78,19 +167,68 @@ public class HardwareOurRobot {
         clawOfDoomRight.setPosition(0.0);
     }
 
-    public void driveByTime(double powerL, double powerR, double mSec){ //For driving
 
-        ElapsedTime driveTime = new ElapsedTime();
+    public void driveByTime(double powerL, double powerR, double mSec){ //For driving
 
         driveTime.reset();
 
-        while (driveTime.milliseconds() < mSec ) {
-            leftDrive.setPower(powerL);
-            rightDrive.setPower(powerR);
+        while (driveTime.milliseconds() <= mSec ) {
+
+            leftFront.setPower(powerL);
+            leftBack.setPower(powerL);
+
+            rightFront.setPower(powerR);
+            rightBack.setPower(powerR);
         }
 
-        leftDrive.setPower(0.0);
-        rightDrive.setPower(0.0);
+        leftFront.setPower(0.0);
+        leftBack.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightBack.setPower(0.0);
 
     }
+
+
+    public String senseColor(){
+
+        String returnColor = "NONE";
+
+        for(int i = 0; i <= 5; i++) {
+            // Read the sensor
+            NormalizedRGBA colors = Rainbow.getNormalizedColors();
+
+            /** Use telemetry to display feedback on the driver station. We show the conversion
+             * of the colors to hue, saturation and value, and display the the normalized values
+             * as returned from the sensor.
+             * @see <a href="http://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html">HSV</a>*/
+
+            int color = colors.toColor();
+
+            float max = Math.max(Math.max(Math.max(colors.red, colors.green), colors.blue), colors.alpha);
+            colors.red /= max;
+            colors.green /= max;
+            colors.blue /= max;
+            color = colors.toColor();
+
+
+            if (colors.red >= .40) {
+
+                returnColor = "RED";
+
+            } else if (Color.BLUE >= .40) {
+
+                returnColor = "BLUE";
+
+            }
+
+        }
+
+
+        return returnColor;
+
+    }
+
+
+
+
 }
