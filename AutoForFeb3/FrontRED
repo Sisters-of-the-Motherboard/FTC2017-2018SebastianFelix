@@ -1,0 +1,95 @@
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+
+@Autonomous(name= "FrontRED", group="Autonomous")
+public class FrontRED extends LinearOpMode {
+
+    HardwareOurRobot Sebastian = new HardwareOurRobot();
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+            Sebastian.initializeRobot(hardwareMap);
+            Sebastian.initializeVuforia(hardwareMap);
+            Sebastian.initializeColorSensor(hardwareMap);
+
+        waitForStart();
+
+
+         String picOrientation = "NONE";
+
+         while (picOrientation.equals("NONE")) {
+
+            picOrientation = Sebastian.readVuforia();
+
+            telemetry.addData("position", picOrientation);
+
+         }
+
+         //Method??
+         Sebastian.openTheCLAWS();
+         sleep(100);
+         Sebastian.closeTheCLAWS();
+         Sebastian.liftMotor.setPower(-0.3);
+         sleep(500);
+         Sebastian.liftMotor.setPower(0.0);
+
+
+        Sebastian.colorServo.setPosition(1.0);
+
+            String returnColor = Sebastian.senseColor();
+
+            if(returnColor.equals("RED")){
+
+                telemetry.addData("Color: ", "Red");
+
+                Sebastian.driveByTime(0.4,0.4, 750);
+                Sebastian.colorServo.setPosition(0.5);
+                Sebastian.driveByTime(-0.5,-0.5,750);
+
+            }
+            else if(returnColor.equals("BLUE")){
+
+                telemetry.addData("Color: ", "Blue");
+                Sebastian.driveByTime(-0.4,-0.4, 750);
+                Sebastian.colorServo.setPosition(0.5);
+                Sebastian.driveByTime(0.5,0.5,750);
+            }
+            else if(returnColor.equals("NONE")){
+
+                telemetry.addData("Color: ", "Not Read");
+                Sebastian.colorServo.setPosition(0.5);
+            }
+
+
+
+            Sebastian.driveByTime(0.5,0.5,1000);
+
+
+        if(picOrientation.equals("LEFT")) {
+
+
+        }
+
+        else if (picOrientation.equals("CENTER")) {
+
+
+
+        }
+        else if (picOrientation.equals("RIGHT")){
+
+
+        }
+
+
+
+
+
+
+    }
+}
