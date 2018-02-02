@@ -50,19 +50,23 @@ public class HardwareOurRobot {
     //Timer
     ElapsedTime driveTime = new ElapsedTime();
 
+    HardwareMap HWMap = null;
+
 
 
 //---------------------METHODS------------------------------------------
 
 
-    //Constructor
+        //Constructor
     public HardwareOurRobot() {
 
-    }
+        }
 
- //---------------------------------INIT--ROBOT------------------------
+        //---------------------------------INIT--ROBOT------------------------
 
-    public void initializeRobot(HardwareMap HWMap) {
+    public void initializeRobot(HardwareMap hwMap) {
+
+        HWMap = hwMap;
 
         leftFront = HWMap.dcMotor.get("leftFront");
         leftBack = HWMap.dcMotor.get("leftBack");
@@ -103,7 +107,7 @@ public class HardwareOurRobot {
 //-------------------------------INIT--COLOR--SENSOR----------------------------
 
 
-    public void initializeColorSensor(HardwareMap HWMap) throws InterruptedException {
+    public void initializeColorSensor() throws InterruptedException {
 
         // turn the light on
         if (Rainbow instanceof SwitchableLight) {
@@ -116,7 +120,9 @@ public class HardwareOurRobot {
 //---------------------------------INIT--VUFORIA----------------------------------
 
 
-    public void initializeVuforia(HardwareMap HWMap){
+    public void initializeVuforia(HardwareMap hwMap){
+
+        HWMap = hwMap;
 
         int cameraMonitorViewId = HWMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
                 "id", HWMap.appContext.getPackageName());
