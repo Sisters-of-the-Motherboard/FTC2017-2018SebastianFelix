@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.app.Activity;
 import android.graphics.Color;
-import android.view.View;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -11,22 +9,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-/**
- * Created by breanna.sorrells on 1/29/2018.
- *
- * To add -  wiring data (where the stuff is)
- * Actual servo initialization positions
- * Change for new stuff!!
- */
 
 public class HardwareOurRobot {
 
@@ -43,9 +32,9 @@ public class HardwareOurRobot {
 
     //Relic operators
     public DcMotor slideMotor;
-    public Servo grabberFront;
-    public Servo grabberBack;
-    public Servo rotator;
+    public Servo swingLeft;
+    public Servo swingRight;
+
 
     //Color Sensor stuff
     public Servo colorServo;
@@ -71,8 +60,8 @@ public class HardwareOurRobot {
 
     }
 
+ //---------------------------------INIT--ROBOT------------------------
 
-    //Initializations
     public void initializeRobot(HardwareMap HWMap) {
 
         leftFront = HWMap.dcMotor.get("leftFront");
@@ -85,9 +74,8 @@ public class HardwareOurRobot {
         clawOfDoomRight = HWMap.servo.get("clawOfDoomRight");
 
         slideMotor = HWMap.dcMotor.get("slideMotor");
-        grabberFront = HWMap.servo.get("grabberFront");
-        grabberBack = HWMap.servo.get("grabberBack");
-        rotator = HWMap.servo.get("rotator");
+        swingLeft = HWMap.servo.get("swingLeft");
+        swingRight = HWMap.servo.get("swingRight");
 
         colorServo = HWMap.servo.get("colorServo");
 
@@ -98,12 +86,6 @@ public class HardwareOurRobot {
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        //Will this regulate speed better? Can remove.
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         /*
                 SET SERVO INIT VALUES CORRECTLY
          */
@@ -111,12 +93,14 @@ public class HardwareOurRobot {
         clawOfDoomLeft.setPosition(0.5);
         clawOfDoomRight.setPosition(0.5);
         colorServo.setPosition(0.4);
-        grabberBack.setPosition(0.1);
-        grabberFront.setPosition(0.1);
-        rotator.setPosition(0.8);
+        swingLeft.setPosition(0.5);
+        swingRight.setPosition(0.5);
+
 
 
     }
+
+//-------------------------------INIT--COLOR--SENSOR----------------------------
 
 
     public void initializeColorSensor(HardwareMap HWMap) throws InterruptedException {
@@ -128,6 +112,8 @@ public class HardwareOurRobot {
 
 
     }
+
+//---------------------------------INIT--VUFORIA----------------------------------
 
 
     public void initializeVuforia(HardwareMap HWMap){
@@ -153,10 +139,10 @@ public class HardwareOurRobot {
     }
 
 
+//--------------------------OPEN--AND--CLOSE--CLAWS---------------------------------
 
 
-        //Movement methods
-    public void openTheCLAWS(){
+  /*  public void openTheCLAWS(){
         clawOfDoomLeft.setPosition(0.8);
 
         clawOfDoomRight.setPosition(0.2);
@@ -168,6 +154,9 @@ public class HardwareOurRobot {
 
         clawOfDoomRight.setPosition(0.0);
     }
+
+
+//-------------------------DRIVE--BY--TIME-----------------------------------------------
 
 
     public void driveByTime(double powerL, double powerR, double mSec){ //For driving
@@ -190,6 +179,48 @@ public class HardwareOurRobot {
 
     }
 
+//---------------------------GRAB--AND--LIFT--GLYPH------------------------------------------
+
+    public void grabAndLiftGlyph(){
+
+        openTheCLAWS();
+
+        driveTime.reset();
+        while (driveTime.milliseconds() <= 500){
+
+        }
+
+        closeTheCLAWS();
+
+        driveTime.reset();
+        while(driveTime.milliseconds() <= 500) {
+
+            liftMotor.setPower(-0.3);
+        }
+
+        liftMotor.setPower(0.0);
+
+    }
+
+
+//--------------------------------------LOWER--GLYPH-----------------------------------------
+
+
+    public void lowerGlyph(){
+
+        driveTime.reset();
+        while(driveTime.milliseconds() <= 500){
+
+            liftMotor.setPower(0.3);
+
+        }
+
+        liftMotor.setPower(0.0);
+
+    }
+
+//-------------------------SENSE--COLOR-----------------------------------------------------
+
 
     public String senseColor(){
 
@@ -198,11 +229,6 @@ public class HardwareOurRobot {
         for(int i = 0; i <= 5; i++) {
             // Read the sensor
             NormalizedRGBA colors = Rainbow.getNormalizedColors();
-
-            /** Use telemetry to display feedback on the driver station. We show the conversion
-             * of the colors to hue, saturation and value, and display the the normalized values
-             * as returned from the sensor.
-             * @see <a href="http://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html">HSV</a>*/
 
             int color = colors.toColor();
 
@@ -232,6 +258,9 @@ public class HardwareOurRobot {
         return returnColor;
 
     }
+
+
+//-------------------------READ--VUFORIA---------------------------------
 
 
     public String readVuforia(){
@@ -271,6 +300,6 @@ public class HardwareOurRobot {
     }
 
 
-
+*/
 
 }
