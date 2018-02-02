@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -40,12 +41,6 @@ public class HardwareOurRobot {
     public Servo colorServo;
     public NormalizedColorSensor Rainbow;
 
-    //Vuforia
-    public static final String TAG = "Vuforia VuMark Sample";
-    VuforiaLocalizer vuforia;
-    VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-    VuforiaTrackable relicTemplate = relicTrackables.get(0);
-
 
     //Timer
     ElapsedTime driveTime = new ElapsedTime();
@@ -57,12 +52,12 @@ public class HardwareOurRobot {
 //---------------------METHODS------------------------------------------
 
 
-        //Constructor
+    //Constructor
     public HardwareOurRobot() {
 
-        }
+    }
 
-        //---------------------------------INIT--ROBOT------------------------
+    //---------------------------------INIT--ROBOT------------------------
 
     public void initializeRobot(HardwareMap hwMap) {
 
@@ -86,7 +81,7 @@ public class HardwareOurRobot {
         Rainbow = HWMap.get(NormalizedColorSensor.class, "Rainbow");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
@@ -96,9 +91,9 @@ public class HardwareOurRobot {
 
         clawOfDoomLeft.setPosition(0.5);
         clawOfDoomRight.setPosition(0.5);
-        colorServo.setPosition(0.4);
-        swingLeft.setPosition(0.5);
-        swingRight.setPosition(0.5);
+        colorServo.setPosition(0.5);
+        swingLeft.setPosition(0.9);
+        swingRight.setPosition(0.1);
 
 
 
@@ -117,38 +112,11 @@ public class HardwareOurRobot {
 
     }
 
-//---------------------------------INIT--VUFORIA----------------------------------
-
-
-    public void initializeVuforia(HardwareMap hwMap){
-
-        HWMap = hwMap;
-
-        int cameraMonitorViewId = HWMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
-                "id", HWMap.appContext.getPackageName());
-
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey =
-                "AddfCmL/////AAAAGfhZdqZawEPNnf6i6NP5bBJnbxm51Vv6Ic543cGLSFZRXzcCLKL8Dz/UCbHG7kVdxhx3dkMGRdopyfekAowHmlslyP5m3pZkhDaGrzdVyZZnVV7rho4mjaUSBQJhx6plhZyFPPK6q7+7xcdFXRhSpOXtRTU3tjVQOFbA2B9uuRGheb1HeidRDvhS/856blHK3Wv +PmeJBgZIrPkGOrLPDsyUqQtFZxKnn65Yce43u0wcs/dbn0ssr+bvvqp1Q4JKJrm2XnzwmtqNd0PZHO6hxHzyaxC5ge +aExWcSEM72yE8d1DznHQ/s5wYRJpVaAss7/F885CTL0zB+Pzcb3wfuG93rlIQE8coMcmqrk+tmuHH";
-
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-
-        relicTemplate.setName("relicVuMarkTemplate");
-
-
-
-    }
-
 
 //--------------------------OPEN--AND--CLOSE--CLAWS---------------------------------
 
 
-  /*  public void openTheCLAWS(){
+    public void openTheCLAWS(){
         clawOfDoomLeft.setPosition(0.8);
 
         clawOfDoomRight.setPosition(0.2);
@@ -228,11 +196,8 @@ public class HardwareOurRobot {
 //-------------------------SENSE--COLOR-----------------------------------------------------
 
 
-    public String senseColor(){
+    public String senseColor(String returnColor){
 
-        String returnColor = "";
-
-        for(int i = 0; i <= 5; i++) {
             // Read the sensor
             NormalizedRGBA colors = Rainbow.getNormalizedColors();
 
@@ -249,7 +214,7 @@ public class HardwareOurRobot {
 
                 returnColor = "RED";
 
-            } else if (Color.BLUE >= .40) {
+            } else if (Color.BLUE >= .60) {
 
                 returnColor = "BLUE";
 
@@ -258,54 +223,12 @@ public class HardwareOurRobot {
                 returnColor = "NONE";
             }
 
-        }
+
 
 
         return returnColor;
 
     }
 
-
-//-------------------------READ--VUFORIA---------------------------------
-
-
-    public String readVuforia(){
-
-        relicTrackables.activate();
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-        String picOrientation = "NONE";
-
-        if (vuMark == RelicRecoveryVuMark.LEFT) {
-            // Test to see if Image is the "LEFT" image and display value.
-
-            picOrientation = "LEFT";
-
-
-        }
-        else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-            // Test to see if Image is the "RIGHT" image and display values.
-
-
-            picOrientation = "RIGHT";
-
-
-        }
-        else if (vuMark == RelicRecoveryVuMark.CENTER) {
-            // Test to see if Image is the "CENTER" image and display values.
-
-            picOrientation = "CENTER";
-
-
-        }
-
-
-
-        return picOrientation;
-
-    }
-
-
-*/
 
 }
