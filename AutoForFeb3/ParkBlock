@@ -1,0 +1,94 @@
+package org.firstinspires.ftc.teamcode;
+       import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.Servo;
+
+/**
+ * Created by ashley.peake on 1/26/2018.
+ */
+
+@Autonomous(name="ParkBlock", group ="Autonomous")
+
+public class ParkBlock extends LinearOpMode {
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+    private DcMotor liftMotor;
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+    Servo rotator;
+
+    Servo grabberFront;
+    Servo grabberBack;
+
+
+
+    public void runOpMode() {
+
+
+
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
+
+        grabberFront = hardwareMap.servo.get("grabberFront");
+        grabberBack = hardwareMap.servo.get("grabberBack");
+
+        rotator = hardwareMap.servo.get("rotator");
+
+
+
+        waitForStart();
+
+        rotator.setPosition(1.0);
+
+        grabberBack.setPosition(0.0);
+        grabberFront.setPosition(0.0);
+
+        clawOfDoomLeft.setPosition(1.0);
+        clawOfDoomRight.setPosition(0.0);
+
+        sleep(1000);
+
+        liftMotor.setPower(-0.3);
+        sleep(500);
+
+
+        leftDrive.setPower(.4);
+        rightDrive.setPower(.4);
+
+        sleep(1000);
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+
+        sleep(800);
+
+
+        liftMotor.setPower(0.3);
+
+
+        sleep(500);
+
+        clawOfDoomLeft.setPosition(0.8);
+        clawOfDoomRight.setPosition(0.2);
+
+        sleep(500);
+
+        leftDrive.setPower(-0.2);
+        rightDrive.setPower(-0.2);
+
+        sleep(500);
+
+
+    }
+}
+
