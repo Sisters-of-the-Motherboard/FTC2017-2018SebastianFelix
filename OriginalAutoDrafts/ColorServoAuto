@@ -1,0 +1,41 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+
+
+@Autonomous(name="ColorServoAutonomous", group ="Autonomous")
+
+public class ColorServoAutonomous extends LinearOpMode {
+
+    Servo ColorServo;
+
+
+    public void runOpMode() {
+
+
+        ColorServo = hardwareMap.servo.get("ColorServo");
+
+
+
+        waitForStart();
+
+
+
+                ColorServo.setPosition(0.0);
+
+                sleep(5000);
+
+                ColorServo.setPosition(0.5);
+
+                sleep(5000);
+
+                ColorServo.setPosition(1.0);
+
+                sleep(5000);
+
+
+
+    }
+}
