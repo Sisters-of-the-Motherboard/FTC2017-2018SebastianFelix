@@ -1,0 +1,133 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp(name="TeleOpFeb1", group="Linear Opmode")
+public class TeleOpFeb1 extends LinearOpMode {
+
+    HardwareOurRobot Sebastian = new HardwareOurRobot();
+    ElapsedTime runtime = new ElapsedTime();
+
+    @Override
+
+
+    public void runOpMode() {
+
+        telemetry.addData("init pressed", "about to initialize");
+        telemetry.update();
+
+        Sebastian.initializeRobot(hardwareMap);
+
+        telemetry.addData("Status", "Ready to run");
+        telemetry.update();
+
+        waitForStart();
+
+
+        while (opModeIsActive()) {
+
+            Sebastian.colorServo.setPosition(0.5);
+
+            double leftPower = -gamepad1.left_stick_y;
+            double rightPower = -gamepad1.right_stick_y;
+
+            Sebastian.leftBack.setPower(leftPower);
+            Sebastian.leftFront.setPower(leftPower);
+            Sebastian.rightBack.setPower(rightPower);
+            Sebastian.rightFront.setPower(rightPower);
+
+            telemetry.addData("Status", "Run Time: " + Sebastian.driveTime.toString());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+
+            telemetry.update();
+
+            if (gamepad2.x) {   //close claws
+
+                Sebastian.closeTheCLAWS();
+            }
+
+            else { //open claws
+
+                Sebastian.openTheCLAWS();
+            }
+
+
+            if (gamepad2.right_bumper) {  //Move Up
+
+                Sebastian.liftMotor.setPower(-0.5);
+
+            } else if (gamepad2.left_bumper) {  //Move down
+
+                Sebastian.liftMotor.setPower(0.3);
+
+            } else {
+
+                Sebastian.liftMotor.setPower(0);
+
+            }
+
+
+            if(gamepad2.dpad_up){
+
+                Sebastian.slideMotor.setPower(-0.5);
+
+            } else if (gamepad2.dpad_down){
+
+                Sebastian.slideMotor.setPower(0.1);
+
+            } else {
+
+                Sebastian.slideMotor.setPower(0);
+            }
+
+
+
+            if (gamepad2.b){
+
+                Sebastian.swingLeft.setPosition(0.15);
+                Sebastian.swingRight.setPosition(0.85);
+            }
+
+            if(gamepad2.y && opModeIsActive()) {
+
+                for(double i = 0.15; i <= 0.8; i += 0.05) {
+                    Sebastian.swingLeft.setPosition( i );
+                    Sebastian.swingRight.setPosition( 1-i );
+
+                    runtime.reset();
+                    while(runtime.milliseconds() <= 200 && opModeIsActive()){
+
+                    }
+
+                }
+            }
+
+            if(gamepad2.a){
+
+                Sebastian.swingLeft.setPosition(1.0);
+                Sebastian.swingRight.setPosition(0.0);
+
+            }
+
+
+
+           /* if(gamepad1.y){
+
+                Sebastian.colorServo.setPosition(0.6);
+
+            }
+            else {
+
+                Sebastian.colorServo.setPosition(0.6);
+
+            }
+            */
+
+
+          }
+        }
+      }
+
+
