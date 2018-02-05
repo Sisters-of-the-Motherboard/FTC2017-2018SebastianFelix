@@ -1,0 +1,217 @@
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+
+/*
+        ________________
+        |               |
+        |           SS  |
+        |           SS  |
+        |               |
+        |               |
+        |_______________|
+
+ */
+
+
+
+
+
+
+@Autonomous(name= "REDFront", group="Autonomous")
+
+public class REDFront extends LinearOpMode {
+
+    HardwareOurRobot Sebastian = new HardwareOurRobot();
+
+    ElapsedTime runtime = new ElapsedTime();
+
+    VuforiaLocalizer vuforia;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        Sebastian.initializeRobot(hardwareMap);
+        telemetry.addData("robot:", "initialized");
+        telemetry.update();
+        Sebastian.initializeColorSensor();
+        telemetry.addData("sensor:", "initialized");
+        telemetry.update();
+
+
+        //Vuforia init
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
+                "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey =
+                "AddfCmL/////AAAAGfhZdqZawEPNnf6i6NP5bBJnbxm51Vv6Ic543cGLSFZRXzcCLKL8Dz/UCbHG7kVdxhx3dkMGRdopyfekAowHmlslyP5m3pZkhDaGrzdVyZZnVV7rho4mjaUSBQJhx6plhZyFPPK6q7+7xcdFXRhSpOXtRTU3tjVQOFbA2B9uuRGheb1HeidRDvhS/856blHK3Wv +PmeJBgZIrPkGOrLPDsyUqQtFZxKnn65Yce43u0wcs/dbn0ssr+bvvqp1Q4JKJrm2XnzwmtqNd0PZHO6hxHzyaxC5ge +aExWcSEM72yE8d1DznHQ/s5wYRJpVaAss7/F885CTL0zB+Pzcb3wfuG93rlIQE8coMcmqrk+tmuHH";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate");
+
+        telemetry.addData("Vuforia:", "initialized");
+        telemetry.update();
+
+
+        waitForStart();
+
+        relicTrackables.activate();
+
+
+        String picOrientation = "NONE";
+
+        runtime.reset();
+
+        while (picOrientation.equals("NONE") && runtime.milliseconds() <= 5000 && opModeIsActive()) {
+
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+            picOrientation = readVuforia(vuMark);
+
+            telemetry.addData("position", picOrientation);
+
+
+        }
+
+          Sebastian.grabAndLiftGlyph();
+
+
+        Sebastian.lowerColorSensor();
+
+        String returnColor = "NONE";
+
+        runtime.reset();
+        while(returnColor.equals("NONE") && runtime.milliseconds() <= 3000 && opModeIsActive()) {
+
+            returnColor = Sebastian.senseColor(returnColor);
+            telemetry.addData("Sensing", returnColor);
+            telemetry.update();
+        }
+
+        sleep(500);
+
+
+
+        if (returnColor.equals("RED")) {
+
+            telemetry.addData("Color: ", "Red");
+            telemetry.update();
+
+            sleep(500);
+
+            Sebastian.driveMecanum(0.5,0.5, -0.5,-0.5,500);
+            Sebastian.colorServo.setPosition(0.5);
+            Sebastian.driveMecanum(-0.5,-0.5,  0.5,0.5,500);
+
+            sleep(1000);
+
+       } else if (returnColor.equals("BLUE")) {
+
+            telemetry.addData("Color: ", "Blue");
+            telemetry.update();
+
+            Sebastian.driveMecanum(-0.5,-0.5, 0.5,-0.5,500);
+            Sebastian.colorServo.setPosition(0.5);
+            Sebastian.driveMecanum(0.5,0.5,  -0.5,-0.5,500);
+
+
+                sleep(1000);
+
+       } else if (returnColor.equals("NONE")) {
+
+            telemetry.addData("Color: ", "Not Read");
+            telemetry.update();
+
+            sleep(1000);
+
+            Sebastian.colorServo.setPosition(0.5);
+
+            sleep(1000);
+        }
+
+
+
+        if (picOrientation.equals("LEFT")) {
+
+            Sebastian.driveMecanum(0.5,0.5, -0.5, -0.5, 1000);
+            Sebastian.driveMecanum(-0.5, 0.5, 0.5, -0.5, 750);
+            Sebastian.driveMecanum(0.3,0.3, -0.3, -0.3, 300);
+
+
+
+        } else if (picOrientation.equals("CENTER")) {
+
+            Sebastian.driveMecanum(0.5,0.5, -0.5, -0.5, 1000);
+            Sebastian.driveMecanum(-0.5, 0.5, 0.5, -0.5, 375);
+            Sebastian.driveMecanum(0.3,0.3, -0.3, -0.3, 300);
+
+
+        } else if (picOrientation.equals("RIGHT")) {
+
+            Sebastian.driveMecanum(0.5,0.5, -0.5, -0.5, 1000);
+            Sebastian.driveMecanum(-0.5, 0.5, 0.5, -0.5, 100);
+            Sebastian.driveMecanum(0.3,0.3, -0.3, -0.3, 300);
+
+
+        } else if (picOrientation.equals("NONE")) {
+
+            // ********************* COPY IN WHICHEVER OF THE ABOVE IS MOST RELIABLE****************************
+
+
+        }
+
+        Sebastian.lowerGlyph();
+        Sebastian.openTheCLAWS();
+        Sebastian.driveMecanum(-0.3,-0.3, 0.3, 0.3, 300);
+
+
+    }
+
+
+//-------------------------READ--VUFORIA---------------------------------
+
+    public String readVuforia(RelicRecoveryVuMark vuMark){
+
+        String picOrientation = "NONE";
+
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            // Test to see if Image is the "LEFT" image and display value.
+
+            picOrientation = "LEFT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            // Test to see if Image is the "RIGHT" image and display values.
+
+
+            picOrientation = "RIGHT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.CENTER) {
+            // Test to see if Image is the "CENTER" image and display values.
+
+            picOrientation = "CENTER";
+
+
+        }
+
+
+
+        return picOrientation;
+
+    }
+}
