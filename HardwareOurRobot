@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,11 +8,25 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+/*
+                                     LF       LB       RF       RB
+
+    To Move FORWARD:                ++++     ++++     ----     ----
+
+    To Move BACKWARDS:              ----     ----     ++++     ++++
+
+    To Move LEFT:                   ----     ++++     ----     ++++
+
+    To Move RIGHT:                  ++++     ----     ++++     ----
+
+    To TURN CLOCKWISE:              ++++     ++++     ++++     ++++
+
+    To TURN COUNTERCLOCKWISE:       ----     ----     ----     ----
+
+
+
+ */
 
 
 public class HardwareOurRobot {
@@ -57,7 +68,9 @@ public class HardwareOurRobot {
 
     }
 
-    //---------------------------------INIT--ROBOT------------------------
+
+
+//---------------------------------INIT--ROBOT------------------------
 
     public void initializeRobot(HardwareMap hwMap) {
 
@@ -82,19 +95,18 @@ public class HardwareOurRobot {
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         /*
                 SET SERVO INIT VALUES CORRECTLY
          */
 
-        clawOfDoomLeft.setPosition(0.5);
-        clawOfDoomRight.setPosition(0.5);
-        colorServo.setPosition(0.5);
-        swingLeft.setPosition(0.9);
-        swingRight.setPosition(0.1);
-
+        clawOfDoomLeft.setPosition(0.6);
+        clawOfDoomRight.setPosition(0.4);
+        colorServo.setPosition(0.3);
+        swingLeft.setPosition(0.8);
+        swingRight.setPosition(0.2);
 
 
     }
@@ -130,7 +142,7 @@ public class HardwareOurRobot {
     }
 
 
-//-------------------------DRIVE--BY--TIME-----------------------------------------------
+//-------------------------DRIVE-FORWARD-----------------------------------------------
 
 
     public void driveByTime(double powerL, double powerR, double mSec){ //For driving
@@ -153,6 +165,30 @@ public class HardwareOurRobot {
 
     }
 
+    //-------------------------DRIVE--MECANUM--FORWARD-----------------------------------------------
+
+
+    public void driveMecanum(double powerLF, double powerLB, double powerRF, double powerRB, double mSec){ //For driving
+
+        driveTime.reset();
+
+        while (driveTime.milliseconds() <= mSec ) {
+
+            leftFront.setPower(powerLF);
+            leftBack.setPower(powerLB);
+
+            rightFront.setPower(powerRF);
+            rightBack.setPower(powerRB);
+        }
+
+        leftFront.setPower(0.0);
+        leftBack.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightBack.setPower(0.0);
+
+    }
+
+
 //---------------------------GRAB--AND--LIFT--GLYPH------------------------------------------
 
     public void grabAndLiftGlyph(){
@@ -167,7 +203,7 @@ public class HardwareOurRobot {
         closeTheCLAWS();
 
         driveTime.reset();
-        while(driveTime.milliseconds() <= 500) {
+        while(driveTime.milliseconds() <= 700) {
 
             liftMotor.setPower(-0.3);
         }
@@ -183,7 +219,7 @@ public class HardwareOurRobot {
     public void lowerGlyph(){
 
         driveTime.reset();
-        while(driveTime.milliseconds() <= 500){
+        while(driveTime.milliseconds() <= 700){
 
             liftMotor.setPower(0.3);
 
@@ -196,7 +232,7 @@ public class HardwareOurRobot {
 //-------------------------SENSE--COLOR-----------------------------------------------------
 
 
-    public String senseColor(String returnColor){
+    public String senseColor(String returnValues){
 
             // Read the sensor
             NormalizedRGBA colors = Rainbow.getNormalizedColors();
@@ -210,23 +246,44 @@ public class HardwareOurRobot {
             color = colors.toColor();
 
 
-            if (colors.red >= .40) {
 
-                returnColor = "RED";
 
-            } else if (Color.BLUE >= .60) {
+            if ((colors.red > 0.1) && (colors.red > colors.blue)) {
 
-                returnColor = "BLUE";
+                returnValues = "RED";
+
+            } else if ((colors.blue > 0.1) && (colors.blue > colors.red)) {
+
+                returnValues = "BLUE";
 
             }
             else {
-                returnColor = "NONE";
+                returnValues = "NONE";
             }
 
 
 
 
-        return returnColor;
+        return returnValues;
+
+    }
+
+
+//-------------------------------LOWER--COLOR--SENSOR-----------------------------------------
+
+    public void lowerColorSensor(){
+
+        for(double i = 0.3; i<0.9; i += 0.1) {
+
+            colorServo.setPosition(i);
+
+            driveTime.reset();
+            while(driveTime.milliseconds() <= 300){
+
+            }
+        }
+
+        colorServo.setPosition(0.97);
 
     }
 
