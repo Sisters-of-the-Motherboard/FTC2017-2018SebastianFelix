@@ -1,0 +1,309 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.view.View;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous ;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+
+@Autonomous(name="SimpleRightRed", group ="Autonomous")
+
+
+public class SimpleRedRight extends LinearOpMode {
+
+    View relativeLayout;
+
+    private ElapsedTime timerOne = new ElapsedTime();
+
+    public static final String TAG = "Vuforia VuMark Sample";
+
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+    DcMotor liftMotor;
+
+
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+
+
+    /**
+
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+
+     * localization engine.
+
+     */
+
+
+    VuforiaLocalizer vuforia;
+
+
+
+    @Override
+
+
+    public void runOpMode() {
+
+
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+
+        liftMotor = hardwareMap.dcMotor.get("liftMotor");
+
+
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
+
+
+        // Send telemetry message to signify robot waiting;
+
+
+        telemetry.addData("Status", "Ready to run");
+        //
+        telemetry.update();
+
+        // Wait for the game to start (driver presses PLAY)
+
+
+
+
+/*
+* To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+	* If no camera monitor is desired, use the parameterless constructor instead (commented out below).
+
+	*/
+
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
+                "id", hardwareMap.appContext.getPackageName());
+
+
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+
+        parameters.vuforiaLicenseKey =
+                "AddfCmL/////AAAAGfhZdqZawEPNnf6i6NP5bBJnbxm51Vv6Ic543cGLSFZRXzcCLKL8Dz/UCbHG7kVdxhx3dkMGRdopyfekAowHmlslyP5m3pZkhDaGrzdVyZZnVV7rho4mjaUSBQJhx6plhZyFPPK6q7+7xcdFXRhSpOXtRTU3tjVQOFbA2B9uuRGheb1HeidRDvhS/856blHK3Wv +PmeJBgZIrPkGOrLPDsyUqQtFZxKnn65Yce43u0wcs/dbn0ssr+bvvqp1Q4JKJrm2XnzwmtqNd0PZHO6hxHzyaxC5ge +aExWcSEM72yE8d1DznHQ/s5wYRJpVaAss7/F885CTL0zB+Pzcb3wfuG93rlIQE8coMcmqrk+tmuHH";
+
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+
+
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+
+/**
+
+ * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
+
+ * in this data set: all three of the VuMarks in the game were created from this one template,
+
+ * but differ in their instance id information.
+
+ * @see VuMarkInstanceId
+
+ */
+
+
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+
+        relicTemplate.setName("relicVuMarkTemplate");
+
+        // can help in debugging; otherwise not necessary
+
+
+        telemetry.addData(">", "Press Play to start");
+        telemetry.update();
+
+
+//THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
+
+        waitForStart();
+
+        relicTrackables.activate();
+
+        clawOfDoomLeft.setPosition(1.0);
+        clawOfDoomRight.setPosition(0);
+
+        liftMotor.setPower(-.2);
+        sleep(500);
+        liftMotor.setPower(0);
+
+
+        String picOrientation = "";
+
+        while (picOrientation.equals("")) {
+
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+            picOrientation = findVuMarkOrientation(vuMark);
+
+            telemetry.addData("position", picOrientation);
+
+            waitForATime(timerOne, 0.5);
+
+        }
+
+
+
+        if(picOrientation.equals("LEFT")){
+
+            drive( 1.0, 1.0, 2000);
+            drive(-1.0, 1.0, 1000);
+            drive(1.0,1.0, 1000);
+            drive(1.0, -1.0, 1000);
+            drive(1.0,1.0,300);
+
+            liftMotor.setPower(.2);
+            sleep(500);
+            liftMotor.setPower(0);
+
+            openTheCLAWS();//////////////////////////////////////////9olse if(picOrientation.equals("CENTER")){
+
+            drive(1.0, 1.0, 2000);
+            drive(-1.0, 1.0, 1000);
+            drive(1.0,1.0,700 );
+            drive(1.0, -1.0, 1000);
+            drive(1.0,1.0, 300);
+
+
+            openTheCLAWS();
+
+            waitForATime(timerOne, 3.0);
+
+        }
+
+
+        telemetry.update();
+
+    }
+
+
+
+
+
+
+
+// EVERYTHING BELOW THIS POINT IS METHODS --------------------------------------------------------------------------------
+
+
+    public String findVuMarkOrientation(RelicRecoveryVuMark vuMark) {
+
+        String picOrientation = "";
+
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            // Test to see if Image is the "LEFT" image and display value.
+
+            picOrientation = "LEFT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            // Test to see if Image is the "RIGHT" image and display values.
+
+
+            picOrientation = "RIGHT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.CENTER) {
+            // Test to see if Image is the "CENTER" image and display values.
+
+            picOrientation = "CENTER";
+
+
+        }
+
+        else {
+
+            telemetry.addData("VuMark", "not visible");
+
+        }
+
+
+        return picOrientation;
+
+    }
+
+
+
+
+
+    public void drive(double powerL, double powerR, int milliseconds) {
+        //Allows Robot to move forward
+
+        leftDrive.setPower(powerL);
+        rightDrive.setPower(powerR);
+
+        sleep(milliseconds);
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+    }
+
+
+
+    public void waitForATime(ElapsedTime timer, double timeInSecs){
+
+        timer.reset();
+
+        while(timer.seconds() < timeInSecs){
+
+            //Just Chillllllll
+
+        }
+    }
+
+
+    public void openTheCLAWS(){
+
+        clawOfDoomLeft.setPosition(0.0);
+
+        clawOfDoomRight.setPosition(1.0);
+
+    }
+
+
+
+    public void closeTheCLAWS(){        //Values quite possibly incorrect
+
+        clawOfDoomLeft.setPosition(1.0);
+
+        clawOfDoomRight.setPosition(0.0);
+
+    }
+
+
+
+
+
+}
+
