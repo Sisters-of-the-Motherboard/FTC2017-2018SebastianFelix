@@ -1,0 +1,68 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+/**
+ * Created by ashley.peake on 1/26/2018.
+ */
+
+@Autonomous(name="Test", group ="Autonomous")
+
+public class Test extends LinearOpMode {
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+    DcMotor liftMotor;
+
+
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+
+    public void runOpMode() {
+
+
+
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+
+
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
+
+        waitForStart();
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftDrive.setTargetPosition(7000 + leftDrive.getCurrentPosition());
+        rightDrive.setTargetPosition(7000 + rightDrive.getCurrentPosition());
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftDrive.setPower(1);
+        rightDrive.setPower(1);
+
+       /* rightDrive.setPower(0.1);
+        leftDrive.setPower(0.1);
+
+
+        sleep(2000);*/
+
+        //while(opModeIsActive()){
+        telemetry.addData("left position", leftDrive.getCurrentPosition());
+        telemetry.addData("right position", rightDrive.getCurrentPosition());
+        telemetry.update();
+        // }
+
+        //leftDrive.setPower(0);
+        //rightDrive.setPower(0);
+
+
+    }
+}
