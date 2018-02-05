@@ -1,0 +1,44 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
+
+/**
+ * Created by ashley.peake on 1/26/2018.
+ */
+
+@TeleOp(name="ColorServoTest", group ="TeleOp")
+
+public class ColorServoTest extends LinearOpMode {
+
+   Servo ColorServo;
+
+
+    public void runOpMode() {
+
+
+    ColorServo = hardwareMap.servo.get("ColorServo");
+
+
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+
+            if( gamepad1.y){
+                ColorServo.setPosition(0.0);
+            }
+
+            if(gamepad1.x){
+                ColorServo.setPosition(0.5);
+            }
+
+            if(gamepad1.a){
+                ColorServo.setPosition(1.0);
+            }
+        }
+
+
+    }
+}
