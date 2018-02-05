@@ -1,0 +1,61 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+/**
+ * Created by ashley.peake on 1/26/2018.
+ */
+
+@Autonomous(name="Park", group ="Autonomous")
+
+public class Park extends LinearOpMode {
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+   /* private DcMotor liftMotor;
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;*/
+
+
+
+    public void runOpMode() {
+
+
+
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        /*liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");*/
+
+
+
+        waitForStart();
+
+      //  clawOfDoomLeft.setPosition(0.9);
+       // clawOfDoomRight.setPosition(0.1);
+
+        //liftMotor.setPower(-0.3);
+        //sleep(500);
+
+
+        leftDrive.setPower(.4);
+        rightDrive.setPower(.4);
+
+        sleep(1000);
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+        //clawOfDoomLeft.setPosition(0.8);
+        //clawOfDoomRight.setPosition(0.2);
+
+    }
+}
