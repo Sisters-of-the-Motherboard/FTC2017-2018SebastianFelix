@@ -1,0 +1,333 @@
+/** ********PLEASE READ THIS IF YOU ARE TESTING THIS******************
+
+ Things I changed:
+ I took out all of the COLOR SENSOR things we are currently not using (can be added back in)
+ Took out (most) things related to POSE (based on pg. 9 of https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/using-vumarks.pdf)
+
+ ADDED methods for:
+ Open claws
+ Close claws
+ Detect VuMark Orientatio (returns a string)
+ A TIMER that acts as a wait command --- sleep() turns off sensors and may be a cause of your recent errors, Ashley. I hope.
+ */
+
+
+package org.firstinspires.ftc.teamcode;
+
+import android.view.View;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous ;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+
+@Autonomous(name="January 25", group ="Autonomous")
+
+
+public class January25 extends LinearOpMode {
+
+    View relativeLayout;
+
+    private ElapsedTime timerOne = new ElapsedTime();
+
+    public static final String TAG = "Vuforia VuMark Sample";
+
+
+    DcMotor leftDrive;
+    DcMotor rightDrive;
+
+
+    Servo clawOfDoomLeft;
+    Servo clawOfDoomRight;
+
+    private String picOrientation = "";
+
+    /**
+
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+        localization engine.
+
+     */
+
+
+    VuforiaLocalizer vuforia;
+
+    @Override
+
+    public void runOpMode()  {
+
+
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+
+
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+
+
+        clawOfDoomLeft = hardwareMap.servo.get("clawOfDoomLeft");
+
+        clawOfDoomRight = hardwareMap.servo.get("clawOfDoomRight");
+
+
+
+        // Send telemetry message to signify robot waiting;
+
+
+        telemetry.addData("Status", "Ready to run");
+        //
+        telemetry.update();
+
+        // Wait for the game to start (driver presses PLAY)
+
+
+
+
+/*
+* To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+	* If no camera monitor is desired, use the parameterless constructor instead (commented out below).
+
+	*/
+
+
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
+                "id", hardwareMap.appContext.getPackageName());
+
+
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+
+
+        parameters.vuforiaLicenseKey =
+                "AddfCmL/////AAAAGfhZdqZawEPNnf6i6NP5bBJnbxm51Vv6Ic543cGLSFZRXzcCLKL8Dz/UCbHG7kVdxhx3dkMGRdopyfekAowHmlslyP5m3pZkhDaGrzdVyZZnVV7rho4mjaUSBQJhx6plhZyFPPK6q7+7xcdFXRhSpOXtRTU3tjVQOFbA2B9uuRGheb1HeidRDvhS/856blHK3Wv+PmeJBgZIrPkGOrLPDsyUqQtFZxKnn65Yce43u0wcs/dbn0ssr+bvvqp1Q4JKJrm2XnzwmtqNd0PZHO6hxHzyaxC5ge+aExWcSEM72yE8d1DznHQ/s5wYRJpVaAss7/F885CTL0zB+Pzcb3wfuG93rlIQE8coMcmqrk+tmuHH";
+
+
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+
+
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+
+
+/**
+
+ * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
+
+ * in this data set: all three of the VuMarks in the game were created from this one template,
+
+ * but differ in their instance id information.
+
+ * @see VuMarkInstanceId
+
+ */
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+
+        relicTemplate.setName("relicVuMarkTemplate");
+
+        // can help in debugging; otherwise not necessary
+
+
+
+        telemetry.addData(">", "Press Play to start");
+        telemetry.update();
+
+
+        closeTheCLAWS(); //put after wait for start
+
+
+        waitForStart();
+        //THIS IS ALL THAT ACTUALLY RUNS WHEN AUTO STARTS ------------------------------------------------------------------------------
+
+
+        relicTrackables.activate();
+
+
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+            while(vuMark == RelicRecoveryVuMark.UNKNOWN && opModeIsActive()) {
+
+                picOrientation = findVuMarkOrientation(vuMark);
+
+                telemetry.addData("position", picOrientation);
+                telemetry.update();
+            }
+
+
+            if(picOrientation.equals("LEFT")){
+
+            }
+            else if(picOrientation.equals("RIGHT")){
+
+                driveForeward(50, 0.1);
+
+                openTheCLAWS();
+
+
+            }
+            else if(picOrientation.equals("CENTER")){
+
+
+            }
+
+
+            telemetry.update();
+
+    }
+
+
+
+
+// EVERYTHING BELOW THIS POINT IS METHODS --------------------------------------------------------------------------------
+
+
+
+
+    public String findVuMarkOrientation(RelicRecoveryVuMark vuMark) {
+
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            // Test to see if Image is the "LEFT" image and display value.
+
+            picOrientation = "LEFT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            // Test to see if Image is the "RIGHT" image and display values.
+
+
+            picOrientation = "RIGHT";
+
+
+        }
+        else if (vuMark == RelicRecoveryVuMark.CENTER) {
+            // Test to see if Image is the "CENTER" image and display values.
+
+            picOrientation = "CENTER";
+
+        }
+
+        else {
+
+            telemetry.addData("VuMark", "not visible");
+
+        }
+
+        return picOrientation;
+
+
+    }
+
+
+
+    public void driveForeward(int targetPosFor, double drivePower) {
+        //Allows Robot to move forward
+
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftDrive.setTargetPosition(targetPosFor);
+        rightDrive.setTargetPosition(targetPosFor);
+
+
+        leftDrive.setPower(drivePower);
+        rightDrive.setPower(drivePower);
+
+
+        while (leftDrive.isBusy() && rightDrive.isBusy()) {
+            telemetry.addData("left position", leftDrive.getCurrentPosition());
+            telemetry.addData("right position", rightDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+    }
+
+
+
+    public void waitForATime(ElapsedTime timer, double timeInSecs){
+
+        timer.reset();
+
+        while(timer.seconds() < timeInSecs){
+
+            //Just Chillllllll
+
+        }
+    }
+
+
+    public void openTheCLAWS(){
+
+        clawOfDoomLeft.setPosition(0.3);
+
+        clawOfDoomRight.setPosition(0.7);
+
+    }
+
+
+
+
+    public void closeTheCLAWS(){        //Values quite possibly incorrect
+
+        clawOfDoomLeft.setPosition(0.9);
+
+        clawOfDoomRight.setPosition(0.1);
+
+    }
+
+
+
+
+    public void driveTurning(int targetPosTurn, double powerL, double powerR) {
+        //Turns the Robot
+
+
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftDrive.setTargetPosition(targetPosTurn);
+        rightDrive.setTargetPosition(targetPosTurn);
+
+        leftDrive.setPower(powerL);
+        rightDrive.setPower(powerR);
+
+
+        while (leftDrive.isBusy() || rightDrive.isBusy()) {
+
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
+    }
+
+
+
+}
